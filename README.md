@@ -57,3 +57,16 @@ hubtoken --list
 
 For each action you'll be asked authenticate with github, enter your
 login, password and a GitHub Two Factor OTP code.
+
+### Development task list
+
+- [ ] create token
+    - [x] go get octokit golang
+    - [ ] use `flag` for opt parsing (import "flag")
+    - [ ] get login from terminal
+    - [ ] get password from terminal and turn off echo
+    - [ ] get otp/2fa code from terminal
+    - [ ] connect to github via octokit
+    - [ ]
+- [ ] delete token
+- [ ] list tokens

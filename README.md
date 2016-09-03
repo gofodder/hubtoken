@@ -20,11 +20,11 @@ web browser from the equation and leaving you in the terminal.
 Create a GitHub personal access token called `token-name`
 
 ```
-hubtoken -c token-name
+hubtoken create token-name
 
 # or
 
-hubtoken --create-token token-name
+hubtoken c token-name
 ```
 
 The new token will be printed in the terminal after login & 2FA.
@@ -34,11 +34,11 @@ The new token will be printed in the terminal after login & 2FA.
 Delete a GitHub personal access token called `token-name`
 
 ```
-hubtoken -d token-name
+hubtoken delete token-name
 
 # or
 
-hubtoken --delete-token token-name
+hubtoken d token-name
 ```
 
 - - -
@@ -46,11 +46,11 @@ hubtoken --delete-token token-name
 List your GitHub personal access tokens
 
 ```
-hubtoken -l
+hubtoken list
 
 # or
 
-hubtoken --list
+hubtoken l
 ```
 
 ### Login / 2FA
@@ -60,13 +60,17 @@ login, password and a GitHub Two Factor OTP code.
 
 ### Development task list
 
-- [ ] create token
-    - [x] go get octokit golang
-    - [ ] use `flag` for opt parsing (import "flag")
-    - [ ] get login from terminal
-    - [ ] get password from terminal and turn off echo
-    - [ ] get otp/2fa code from terminal
-    - [ ] connect to github via octokit
-    - [ ]
+- [x] Create Token
+    - ~~go get octokit golang~~
+    - [x] go get go-github
+    - ~~Use `flag` for opt parsing (import "flag")~~ use `cli` instead
+    - [x] Use `codegangsta/cli` as a cli front end
+    - [x] Get login from terminal
+    - [x] Get password from terminal and turn off echo
+    - [x] Get otp/2fa code from terminal
+    - ~~Connect to github via octokit~~ use go-github instead
+    - [x] connect to github via go-github using OTP/2FA
+    - [x] Create/retrieve token
+    - [x] Print token to STDOUT
 - [ ] delete token
 - [ ] list tokens

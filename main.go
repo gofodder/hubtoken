@@ -9,8 +9,32 @@ import (
   "golang.org/x/crypto/ssh/terminal"
   "github.com/codegangsta/cli"
   "github.com/google/go-github/github"
+  "github.com/fatih/color"
 )
 
+func InfoMessage() *color.Color {
+  return color.New(color.FgGreen, color.Bold)
+}
+
+func HeadingMessage() *color.Color {
+  return color.New(color.Bold)
+}
+
+func ErrorMessage() *color.Color {
+  return color.New(color.FgRed, color.Bold)
+}
+
+func isPersonalAccessToken(a *github.Authorization) bool {
+  return *a.App.URL == "https://developer.github.com/v3/oauth_authorizations/"
+}
+
+func ForEachAuthorizations(authorizations []*github.Authorization, f func(*github.Authorization)) {
+  for _, authorization := range authorizations {
+    if isPersonalAccessToken(authorization) {
+      f(authorization)
+    }
+  }
+}
 func Prompt(Message string) string {
   fmt.Print(Message)
   reader := bufio.NewReader(os.Stdin)
@@ -56,6 +80,30 @@ func CreateToken(note string) {
   }
 }
 
+func GetAuthorizationsList(client *github.Client) []*github.Authorization {
+  authorizations, _, err := client.Authorizations.List(nil)
+  if err != nil {
+    ErrorMessage().Printf("Error getting personal access tokens\nAuthorizations.List returned error: %v\n", err)
+    os.Exit(1)
+  }
+  return authorizations
+}
+
+
+func ListTokens() {
+  login := Login()
+  client := github.NewClient(login.Client())
+  authorizations := GetAuthorizationsList(client)
+  if len(authorizations) > 0 {
+    HeadingMessage().Printf("\nPersonal Access Tokens for %s:\n", login.Username)
+    ForEachAuthorizations(authorizations, func(auth *github.Authorization) {
+      InfoMessage().Printf("%s\n", *auth.Note)
+    })
+  } else {
+    ErrorMessage().Printf("There are no personal access tokens for your GitHub account\n")
+  }
+}
+
 func main() {
   app           := cli.NewApp()
   app.Name       = "HubToken"
@@ -87,9 +135,7 @@ func main() {
       Aliases: []string{"l"},
       Usage: "list personal access tokens",
       Action: func(c *cli.Context) error {
-        // Request Authentication Parameters (Login, Password, OTP)
-        // Call Github API
-        fmt.Println("listing ...")
+        ListTokens()
         return nil
       },
     },

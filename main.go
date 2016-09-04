@@ -97,19 +97,18 @@ func PasswordPrompt(Message string) string {
   return strings.TrimSpace(text)
 }
 
-func Login() github.BasicAuthTransport {
+func Login() *github.Client {
   transport := github.BasicAuthTransport{
     Username: Prompt("Github login: "),
     Password: PasswordPrompt("Password: "),
-    OTP: Prompt("2FA/OTP: "),
+    OTP:      Prompt("2FA/OTP: "),
   }
   fmt.Println()
-  return transport
+  return github.NewClient(transport.Client())
 }
 
 func CreateToken(note string) {
-  login := Login()
-  client := github.NewClient(login.Client())
+  client := Login()
 
   // TODO: Scopes should be set by the user
   scopes := []github.Scope{"repo"}
@@ -139,8 +138,7 @@ func GetAuthorizationsList(client *github.Client) []*github.Authorization {
 }
 
 func DeleteToken(note string) {
-  login := Login()
-  client := github.NewClient(login.Client())
+  client := Login()
   authorization := GetAuthorization(note, GetAuthorizationsList(client))
 
   if authorization != nil {
@@ -157,11 +155,10 @@ func DeleteToken(note string) {
 }
 
 func ListTokens() {
-  login := Login()
-  client := github.NewClient(login.Client())
+  client := Login()
   authorizations := GetAuthorizationsList(client)
   if len(authorizations) > 0 {
-    HeadingMessage().Printf("Personal Access Tokens for %s:\n", login.Username)
+    HeadingMessage().Printf("GitHub Personal Access Tokens:\n")
     ForEachAuthorizations(authorizations, func(auth *github.Authorization) {
       InfoMessage().Printf("%s\n", *auth.Note)
     })
@@ -174,7 +171,7 @@ func main() {
   app           := cli.NewApp()
   app.Name       = "HubToken"
   app.Usage      = "Manage GitHub personal access tokens"
-  app.Version    = "1.0.0"
+  app.Version    = "1.0.1"
   app.Commands   = []cli.Command{
     {
       Name: "create",

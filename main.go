@@ -11,19 +11,49 @@ import (
   "github.com/google/go-github/github"
 )
 
-func prompt(Message string) string {
+func Prompt(Message string) string {
   fmt.Print(Message)
   reader := bufio.NewReader(os.Stdin)
   text, _ := reader.ReadString('\n')
   return strings.TrimSpace(text)
 }
 
-func password(Message string) string {
+func PasswordPrompt(Message string) string {
   fmt.Print(Message)
   bytes, _ := terminal.ReadPassword(int(syscall.Stdin))
   text := string(bytes)
   fmt.Println()
   return strings.TrimSpace(text)
+}
+
+func Login() github.BasicAuthTransport {
+  return github.BasicAuthTransport{
+    Username: Prompt("Github login: "),
+    Password: PasswordPrompt("Password: "),
+    OTP: Prompt("2FA/OTP: "),
+  }
+}
+
+func CreateToken(note string) {
+  login := Login()
+  client := github.NewClient(login.Client())
+
+  // TODO: Scopes should be set by the user
+  scopes := []github.Scope{"repo"}
+
+  auth_req := &github.AuthorizationRequest{
+    Note: &note,
+    Scopes: scopes,
+  }
+
+  authorization, _, err := client.Authorizations.Create(auth_req)
+
+  if err != nil {
+    fmt.Printf("Error creating personal access token: %v\nAuthorizations.Create returned error: %v\n", note, err)
+  } else {
+    token := *authorization.Token
+    fmt.Printf("%v\n", strings.TrimPrefix(token, "0x"))
+  }
 }
 
 func main() {
@@ -37,25 +67,7 @@ func main() {
       Aliases: []string{"c"},
       Usage: "Create personal access token called `NAME`",
       Action: func(c *cli.Context) error {
-        note      := c.Args().First()
-        login     := prompt("Github login: ")
-        password  := password("password: ")
-        otp       := prompt("2FA/OTP: ")
-        scopes    := []github.Scope{"repo"}
-        tp        := github.BasicAuthTransport{Username: login, Password: password, OTP: otp}
-        client    := github.NewClient(tp.Client())
-        input     := &github.AuthorizationRequest{Note: &note, Scopes: scopes}
-
-        authorization, _, err := client.Authorizations.Create(input)
-
-        if err != nil {
-          fmt.Errorf("Authorizations.Create returned error: %v", err)
-          return nil
-        }
-
-        token := *authorization.Token
-        fmt.Printf("%v\n", strings.TrimPrefix(token, "0x"))
-
+        CreateToken(c.Args().First())
         return nil
       },
     },

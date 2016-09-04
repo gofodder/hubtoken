@@ -60,6 +60,15 @@ login, password and a GitHub Two Factor OTP code.
 
 ### Development task list
 
+- [ ] input validation
+- [ ] better errors
+
+#### 1.0.1
+
+- [x] Pretty ansi color messages
+
+#### 0.1.0
+
 - [x] Create Token
     - ~~go get octokit golang~~
     - [x] go get go-github
@@ -72,5 +81,5 @@ login, password and a GitHub Two Factor OTP code.
     - [x] connect to github via go-github using OTP/2FA
     - [x] Create/retrieve token
     - [x] Print token to STDOUT
-- [ ] delete token
-- [ ] list tokens
+- [x] delete token
+- [x] list tokens

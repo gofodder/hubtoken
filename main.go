@@ -12,8 +12,16 @@ import (
   "github.com/fatih/color"
 )
 
+func WarningMessage() *color.Color {
+  return color.New(color.FgYellow, color.Bold)
+}
+
 func InfoMessage() *color.Color {
   return color.New(color.FgGreen, color.Bold)
+}
+
+func SuccessMessage() *color.Color {
+  return color.New(color.FgCyan, color.Bold)
 }
 
 func HeadingMessage() *color.Color {
@@ -28,6 +36,16 @@ func isPersonalAccessToken(a *github.Authorization) bool {
   return *a.App.URL == "https://developer.github.com/v3/oauth_authorizations/"
 }
 
+func FilterAuthorizations(authorizations []*github.Authorization, f func(*github.Authorization) bool) []*github.Authorization {
+  filtered := make([]*github.Authorization, 0)
+  for _, authorization := range authorizations {
+    if isPersonalAccessToken(authorization) && f(authorization) {
+      filtered = append(filtered, authorization)
+    }
+  }
+  return filtered
+}
+
 func ForEachAuthorizations(authorizations []*github.Authorization, f func(*github.Authorization)) {
   for _, authorization := range authorizations {
     if isPersonalAccessToken(authorization) {
@@ -35,6 +53,35 @@ func ForEachAuthorizations(authorizations []*github.Authorization, f func(*githu
     }
   }
 }
+
+func GetAuthorization(note string, authorizations []*github.Authorization) *github.Authorization {
+  if len(authorizations) < 1 {
+    WarningMessage().Printf("Warning:")
+    fmt.Println("There are no personal access tokens for your GitHub account")
+    return nil
+  }
+
+  filtered := FilterAuthorizations(authorizations, func(auth *github.Authorization) bool {
+    return *auth.Note == note
+  })
+
+  if len(filtered) < 1 {
+    WarningMessage().Printf("Warning:")
+    fmt.Printf("There are no personal access tokens for your GitHub account named %s\n", note)
+  }
+
+  if len(filtered) > 1  {
+    WarningMessage().Printf("Warning:")
+    fmt.Printf("There are more than one personal access tokens for your GitHub account named %s\n", note)
+  }
+
+  if len(filtered) == 1 {
+    return filtered[0]
+  }
+
+  return nil
+}
+
 func Prompt(Message string) string {
   fmt.Print(Message)
   reader := bufio.NewReader(os.Stdin)
@@ -89,6 +136,23 @@ func GetAuthorizationsList(client *github.Client) []*github.Authorization {
   return authorizations
 }
 
+func DeleteToken(note string) {
+  login := Login()
+  client := github.NewClient(login.Client())
+  authorization := GetAuthorization(note, GetAuthorizationsList(client))
+
+  if authorization != nil {
+    _, err := client.Authorizations.Delete(*authorization.ID)
+    if err != nil {
+      WarningMessage().Printf("Error deleting personal access token: %v\n", note)
+      ErrorMessage().Printf("Authorizations.Delete returned error: %v\n", err)
+    } else {
+      SuccessMessage().Printf("Deleted personal access token %v\n", note)
+    }
+  } else {
+    WarningMessage().Printf("Couldn't find personal access token %v\n", note)
+  }
+}
 
 func ListTokens() {
   login := Login()
@@ -124,9 +188,7 @@ func main() {
       Aliases: []string{"D"},
       Usage: "Delete a token called `NAME`",
       Action: func(c *cli.Context) error {
-        // Request Authentication Parameters (Login, Password, OTP)
-        // Call Github API
-        fmt.Println("deleting ...", c.Args().First())
+        DeleteToken(c.Args().First())
         return nil
       },
     },

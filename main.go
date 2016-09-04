@@ -98,11 +98,13 @@ func PasswordPrompt(Message string) string {
 }
 
 func Login() github.BasicAuthTransport {
-  return github.BasicAuthTransport{
+  transport := github.BasicAuthTransport{
     Username: Prompt("Github login: "),
     Password: PasswordPrompt("Password: "),
     OTP: Prompt("2FA/OTP: "),
   }
+  fmt.Println()
+  return transport
 }
 
 func CreateToken(note string) {
@@ -159,7 +161,7 @@ func ListTokens() {
   client := github.NewClient(login.Client())
   authorizations := GetAuthorizationsList(client)
   if len(authorizations) > 0 {
-    HeadingMessage().Printf("\nPersonal Access Tokens for %s:\n", login.Username)
+    HeadingMessage().Printf("Personal Access Tokens for %s:\n", login.Username)
     ForEachAuthorizations(authorizations, func(auth *github.Authorization) {
       InfoMessage().Printf("%s\n", *auth.Note)
     })
@@ -172,7 +174,7 @@ func main() {
   app           := cli.NewApp()
   app.Name       = "HubToken"
   app.Usage      = "Manage GitHub personal access tokens"
-  app.Version    = "0.1.0"
+  app.Version    = "1.0.0"
   app.Commands   = []cli.Command{
     {
       Name: "create",

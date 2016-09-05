@@ -1,7 +1,10 @@
 # HubToken
 
-This command allows you to manage your GitHub personal access tokens from the
-command line.
+**NOTE: HubToken is (currently) intended for use only with Github
+accounts that have Two Factor Authentication enabled.**
+
+This command allows you to manage your GitHub personal access tokens
+from the command line.
 
 If you are using GitHub Two Factor Authentication you'll know that
 quick password access from the command line is not easy.  You will

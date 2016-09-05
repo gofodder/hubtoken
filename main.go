@@ -178,7 +178,12 @@ func main() {
       Aliases: []string{"c"},
       Usage: "Create personal access token called `NAME`",
       Action: func(c *cli.Context) error {
-        CreateToken(c.Args().First())
+        if c.Args().First() != "" {
+          CreateToken(c.Args().First())
+        } else {
+          WarningMessage().Printf("You must supply a token name to create.")
+          os.Exit(1)
+        }
         return nil
       },
     },
@@ -187,7 +192,12 @@ func main() {
       Aliases: []string{"D"},
       Usage: "Delete a token called `NAME`",
       Action: func(c *cli.Context) error {
-        DeleteToken(c.Args().First())
+        if c.Args().First() != "" {
+          DeleteToken(c.Args().First())
+        } else {
+          WarningMessage().Printf("You must supply a token name to delete.")
+          os.Exit(1)
+        }
         return nil
       },
     },

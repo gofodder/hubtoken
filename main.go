@@ -170,7 +170,7 @@ func main() {
   app           := cli.NewApp()
   app.Name       = "HubToken"
   app.Usage      = "Manage GitHub personal access tokens"
-  app.Version    = "1.0.2"
+  app.Version    = "1.0.3"
   app.Commands   = []cli.Command{
     {
       Name: "create",

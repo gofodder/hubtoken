@@ -23,7 +23,6 @@ you manage your personal access tokens with minimal fuss.
 
 ```
 go get github.com/gofodder/go-hubtoken
-go install github.com/gofodder/go-hubtoken
 ```
 
 ## Usage
@@ -101,10 +100,12 @@ login, password and a GitHub Two Factor OTP code.
         - [ ] List tokens
 
 - [ ] Test drive new dev work
-- [ ] Create token NAME mandatory / prompt if missing. (TBD)
-- [ ] Delete token NAME mandatory / prompt if missing. (TBD)
+- [x] Create token NAME mandatory / prompt if missing. (TBD)
+- [x] Delete token NAME mandatory / prompt if missing. (TBD)
 - [ ] Input validation
-- [ ] Better error messages
+    - [ ] don't allow certain chars (check github for token name rules)
+    - [ ] check that duplicate token names cannot be used
+- [-] Better error messages
 
 #### 1.0.1
 
@@ -126,3 +127,5 @@ login, password and a GitHub Two Factor OTP code.
     - [x] Print token to STDOUT
 - [x] delete token
 - [x] list tokens
+
+[Go]:https://golang.org/

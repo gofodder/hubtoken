@@ -7,18 +7,38 @@ This command allows you to manage your GitHub personal access tokens
 from the command line.
 
 If you are using GitHub Two Factor Authentication you'll know that
-quick password access from the command line is not easy.  You will
-usually need to setup an Personal Access Token (OAuth2 Token), or an
-SSH key.
+quick password access from the command line is a bit of a pain.
 
-For temporary access this is inconvenient and will often require you
-to jump into a web browser, authenticate with GitHub, get a 2FA code,
-and then grab the token from the github web page.
+Usually you'd setup an SSH key, or a Personall access token.  For
+temporary access this is a little inconvenient, you'll need to jump
+into a web browser, authenticate with GitHub, get a 2FA code, and then
+grab the token from the github web page.
 
-The purpose of Hubtoken is to remove much of this pain by removing the
-web browser from the equation and leaving you in the terminal.
+Hubtoken removes this friction by keeping you in the terminal, letting
+you manage your personal access tokens with minimal fuss.
+
+## Installation
+
+`hubtoken` requires [Go], installation is simple:
+
+```
+go get github.com/gofodder/go-hubtoken
+go install github.com/gofodder/go-hubtoken
+```
 
 ## Usage
+
+View the `hubtoken` help & usage page using:
+
+```
+hubtoken
+```
+
+or help for a specific command
+
+```
+hubtoken help [command]
+```
 
 Create a GitHub personal access token called `token-name`
 

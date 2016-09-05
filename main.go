@@ -170,7 +170,7 @@ func main() {
   app           := cli.NewApp()
   app.Name       = "HubToken"
   app.Usage      = "Manage GitHub personal access tokens"
-  app.Version    = "1.0.3"
+  app.Version    = "1.0.4"
   app.Commands   = []cli.Command{
     {
       Name: "create",
@@ -189,7 +189,7 @@ func main() {
     {
       Name: "delete",
       Aliases: []string{"D"},
-      Usage: "Delete a token called `NAME`",
+      Usage: "Delete personal access token called `NAME`",
       Action: func(c *cli.Context) error {
         if c.Args().First() != "" {
           DeleteToken(c.Args().First())
@@ -203,7 +203,7 @@ func main() {
     {
       Name: "list",
       Aliases: []string{"l"},
-      Usage: "list personal access tokens",
+      Usage: "List all personal access tokens",
       Action: func(c *cli.Context) error {
         ListTokens()
         return nil

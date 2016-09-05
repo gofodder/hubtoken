@@ -36,8 +36,10 @@ func isPersonalAccessToken(a *github.Authorization) bool {
   return *a.App.URL == "https://developer.github.com/v3/oauth_authorizations/"
 }
 
-func FilterAuthorizations(authorizations []*github.Authorization, f func(*github.Authorization) bool) []*github.Authorization {
-  filtered := make([]*github.Authorization, 0)
+type Authorizations []*github.Authorization
+
+func (authorizations Authorizations) Filter(f func(*github.Authorization) bool) Authorizations {
+  filtered := make(Authorizations, 0)
   for _, authorization := range authorizations {
     if isPersonalAccessToken(authorization) && f(authorization) {
       filtered = append(filtered, authorization)
@@ -46,7 +48,7 @@ func FilterAuthorizations(authorizations []*github.Authorization, f func(*github
   return filtered
 }
 
-func ForEachAuthorizations(authorizations []*github.Authorization, f func(*github.Authorization)) {
+func (authorizations Authorizations) ForEach(f func(*github.Authorization)) {
   for _, authorization := range authorizations {
     if isPersonalAccessToken(authorization) {
       f(authorization)
@@ -54,14 +56,14 @@ func ForEachAuthorizations(authorizations []*github.Authorization, f func(*githu
   }
 }
 
-func GetAuthorization(note string, authorizations []*github.Authorization) *github.Authorization {
+func GetAuthorization(note string, authorizations Authorizations) *github.Authorization {
   if len(authorizations) < 1 {
     WarningMessage().Printf("Warning:")
     fmt.Println("There are no personal access tokens for your GitHub account")
     return nil
   }
 
-  filtered := FilterAuthorizations(authorizations, func(auth *github.Authorization) bool {
+  filtered := authorizations.Filter(func(auth *github.Authorization) bool {
     return *auth.Note == note
   })
 
@@ -70,15 +72,12 @@ func GetAuthorization(note string, authorizations []*github.Authorization) *gith
     fmt.Printf("There are no personal access tokens for your GitHub account named %s\n", note)
   }
 
-  if len(filtered) > 1  {
-    WarningMessage().Printf("Warning:")
-    fmt.Printf("There are more than one personal access tokens for your GitHub account named %s\n", note)
-  }
-
   if len(filtered) == 1 {
     return filtered[0]
   }
 
+  ErrorMessage().Printf("Error:")
+  fmt.Printf("Unhandled error when getting token")
   return nil
 }
 
@@ -128,7 +127,7 @@ func CreateToken(note string) {
   }
 }
 
-func GetAuthorizationsList(client *github.Client) []*github.Authorization {
+func GetAuthorizationsList(client *github.Client) Authorizations {
   authorizations, _, err := client.Authorizations.List(nil)
   if err != nil {
     ErrorMessage().Printf("Error getting personal access tokens\nAuthorizations.List returned error: %v\n", err)
@@ -159,7 +158,7 @@ func ListTokens() {
   authorizations := GetAuthorizationsList(client)
   if len(authorizations) > 0 {
     HeadingMessage().Printf("GitHub Personal Access Tokens:\n")
-    ForEachAuthorizations(authorizations, func(auth *github.Authorization) {
+    authorizations.ForEach(func(auth *github.Authorization) {
       InfoMessage().Printf("%s\n", *auth.Note)
     })
   } else {

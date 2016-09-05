@@ -60,8 +60,28 @@ login, password and a GitHub Two Factor OTP code.
 
 ### Development task list
 
-- [ ] input validation
-- [ ] better errors
+- [ ] Setup testing
+    - [ ] Mock GitHub endpoints
+
+        NOTE: Probably use the same/similar testing setup as go-github (TBD)
+
+        - [ ] Authentication
+        - [ ] Authorizations
+            - [ ] Create
+            - [ ] Delete
+            - [ ] List
+
+    - [ ] Add regression tests for
+        - [ ] Login
+        - [ ] Create token
+        - [ ] Delete token
+        - [ ] List tokens
+
+- [ ] Test drive new dev work
+- [ ] Create token NAME mandatory / prompt if missing. (TBD)
+- [ ] Delete token NAME mandatory / prompt if missing. (TBD)
+- [ ] Input validation
+- [ ] Better error messages
 
 #### 1.0.1
 

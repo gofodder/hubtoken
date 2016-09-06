@@ -19,7 +19,16 @@ you manage your personal access tokens with minimal fuss.
 
 ## Installation
 
-`hubtoken` requires [Go], installation is simple:
+#### Homebrew
+
+```
+brew tap gofodder/hubtoken
+brew install hubtoken
+```
+
+#### Using go
+
+If you have go already installed:
 
 ```
 go get github.com/gofodder/go-hubtoken

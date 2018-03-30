@@ -169,7 +169,8 @@ func ListTokens() {
 func main() {
   app           := cli.NewApp()
   app.Name       = "HubToken"
-  app.Usage      = "Manage GitHub personal access tokens"
+  app.Usage      = "Manage GitHub personal access tokens\n" +
+    "(use a github personal token in-place of username or password when prompted to skip OTP/2FA)"
   app.Version    = "1.0.4"
   app.Commands   = []cli.Command{
     {
